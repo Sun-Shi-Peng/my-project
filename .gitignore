@@ -1,0 +1,48 @@
+[200~# 编译产物
+*.o
+*.out
+*.a
+*.so
+*.elf
+*.bin
+*.d
+*.hex
+
+# 可执行文件（没有后缀的）
+!*/
+*
+!*.c
+!*.cpp
+!*.h
+!*.hpp
+!*.cc
+!*.cxx
+!CMakeLists.txt
+!Makefile
+!.gitignore
+!README.md
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志和临时文件
+*.log
+*.tmp
+*.pid
+core
+core.*
+
+# 构建目录
+build/
+cmake-build-*/
+out/
+bin/
+lib/
+
+# 系统文件
+.DS_Store
+Thumbs.db
