@@ -1,48 +1,46 @@
-[200~# 编译产物
-*.o
-*.out
-*.a
-*.so
-*.elf
-*.bin
-*.d
-*.hex
+# C/C++ 项目 .gitignore （只忽略编译产物，保留所有源码）
+# 你的 .c .cpp .h .hpp Makefile 全部正常提交
 
-# 可执行文件（没有后缀的）
-!*/
-*
+# 编译生成的文件
+*.o
+*.obj
+*.out
+*.exe
+*.so
+*.so.*
+*.a
+*.lib
+*.dll
+*.dylib
+*.ko
+
+# 可执行程序（Linux/macOS 无后缀）
 !*.c
 !*.cpp
 !*.h
 !*.hpp
-!*.cc
-!*.cxx
-!CMakeLists.txt
+!*.hxx
 !Makefile
-!.gitignore
-!README.md
+!makefile
+!*.mk
+!*.md
+!*.txt
+!*.sh
 
-# IDE 配置
-.vscode/
-.idea/
+# 编辑器临时文件
 *.swp
 *.swo
 *~
-
-# 日志和临时文件
-*.log
-*.tmp
-*.pid
-core
-core.*
+.DS_Store
+.vscode/
+.idea/
 
 # 构建目录
 build/
-cmake-build-*/
-out/
 bin/
-lib/
+obj/
+debug/
+release/
 
-# 系统文件
-.DS_Store
-Thumbs.db
+# 日志
+*.log
