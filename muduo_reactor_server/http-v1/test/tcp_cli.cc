@@ -13,6 +13,7 @@ int main()
         DBG_LOG("%s", buf);
         sleep(1);
     }
+    
     while(1)   sleep(1);
     return 0;
 }

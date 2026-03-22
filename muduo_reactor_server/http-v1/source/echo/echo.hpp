@@ -15,9 +15,8 @@ private:
     }
     void OnMessage(const PtrConnection &conn, Buffer *buf)
     {
+        conn->Send(buf->ReadPosition(), buf->ReadAbleSize());
         buf->MoveReadOffset(buf->ReadAbleSize());
-        std::string str = "Hello ssp!";
-        conn->Send(str.c_str(), str.size());
         // conn->ShutDown();
     }
 public:
