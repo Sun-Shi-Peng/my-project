@@ -310,7 +310,8 @@ public:
             {
                 return 0;
             }
-            ERR_LOG("SOCKET RECV FAILED!!");
+            ERR_LOG("SOCKET SEND FAILED! errno:%d, msg:%s", errno, strerror(errno));
+            // ERR_LOG("SOCKET RECV FAILED!!");
             return -1;
         }
         return ret; // 实际发送的数据长度
@@ -1069,7 +1070,7 @@ private:
     }
 
     // 这个接口并不是实际的发送接口，而只是把要发送的数据放到了发送缓冲区，启动了可写事件监控
-    void SendInLoop(Buffer buf)
+    void SendInLoop(Buffer &buf)
     {
         if (_statu == DISCONNECTED)
             return;
@@ -1200,7 +1201,7 @@ public:
         // 因此有可能执行的时候，daya指向的空间有可能已经被释放了
         Buffer buf;
         buf.WriteAndPush(data, len);
-        _loop->RunInLoop(std::bind(&Connection::SendInLoop, this, buf));
+        _loop->RunInLoop(std::bind(&Connection::SendInLoop, this, std::move(buf)));
     }
     // 提供给组件使用者的关闭接口 --- 并不实际关闭，需要判断有没有数据待处理
     void ShutDown()
