@@ -1,8 +1,8 @@
-all :client3
-client2:client3.cpp
+all :client6
+client2:client6.cpp
 	g++ -std=c++11 -o $@ $^ -lpthread
 clean:
-	rm -f client3
+	rm -f client6
 
 client:tcp_cli.cc
 	g++ -std=c++11 -o $@ $^ -lpthread

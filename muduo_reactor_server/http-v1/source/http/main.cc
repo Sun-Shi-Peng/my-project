@@ -29,7 +29,8 @@ void Login(const HttpRequest &req, HttpResponse *rsp)
 }
 void PutFile(const HttpRequest &req, HttpResponse *rsp)
 {
-    rsp->SetContent(RequestStr(req),"text/plain");
+    std::string pathname =WWWROOT+req._path;
+    Util::WriteFile(pathname,req._body);
 }
 void DelFile(const HttpRequest &req, HttpResponse *rsp)
 {

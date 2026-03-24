@@ -29,7 +29,7 @@
 #define INF 0
 #define DBG 1
 #define ERR 2
-#define LOG_LEVEL INF
+#define LOG_LEVEL ERR
 #define LOG(level, format, ...)                                                                                        \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -442,9 +442,7 @@ public:
     {
         if ((_revents & EPOLLIN) || (_revents & EPOLLRDHUP) || (_revents & EPOLLPRI))
         {
-            // 不管任何事件，都调用的回调函数
-            if (_event_callback)
-                _event_callback();
+
             // 可读，对方挂断，优先事件发生都触发可读事件回调
             if (_read_callback) // 可读事件存在
                 _read_callback();
@@ -452,9 +450,6 @@ public:
         // 有可能会释放连接的操作时间，一次只处理一个
         if (_revents & EPOLLOUT)
         {
-            // 不管任何事件，都调用的回调函数
-            if (_event_callback)
-                _event_callback(); // 放到事件处理完毕后调用，刷新活跃度
             if (_write_callback)
                 _write_callback();
         }
@@ -475,6 +470,8 @@ public:
                 _close_callback();
             }
         }
+        if (_event_callback) // 刷新活跃度
+            _event_callback();
     }
 };
 
@@ -647,6 +644,7 @@ private:
     int ReadTimerfd()
     {
         uint64_t times;
+        // 有可能因为其他描述符的事件处理花费时间比较长，然后再处理定时器描述符事件的时候，有可能就已经超时很多次了
         // 需要注意的是定时器超时后,则描述符触发可读事件，必须读取8字节的数据，保存的是自上次启动定时器或read后的超时次数
         int ret = read(_timerfd, &times, sizeof(times));
         if (ret < 0)
@@ -996,7 +994,7 @@ private:
             {
                 _message_callback(shared_from_this(), &_in_buffer);
             }
-            return ReleaseInLoop(); // 这时候就是实际的关闭释放操作了
+            return Release(); // 这时候就是实际的关闭释放操作了
         }
         _out_buffer.MoveReadOffset(ret); // 千万不要忘了把读偏移向后移动
         if (_out_buffer.ReadAbleSize() == 0)
@@ -1006,7 +1004,7 @@ private:
         // 如果当前是连接待关闭状态，则有数据，发送完数据释放连接，没有数据直接释放
         if (_statu == DISCONNECTING && _out_buffer.ReadAbleSize() == 0)
         {
-            return ReleaseInLoop();
+            return Release();
         }
         return;
     }
@@ -1019,7 +1017,7 @@ private:
             // shared_from_this() --- 从当前对象获取自身的shared_ptr管理对象
             return _message_callback(shared_from_this(), &_in_buffer);
         }
-        return ReleaseInLoop();
+        return Release();
     }
     // 描述符触发出错事件
     void HandleError()
@@ -1099,7 +1097,7 @@ private:
         }
         if (_out_buffer.ReadAbleSize() == 0)
         {
-            ReleaseInLoop();
+            Release();
         }
     }
     void EnableInactiveReleaseInLoop(int sec)
@@ -1112,7 +1110,7 @@ private:
             return _loop->TimerRefresh(_conn_id);
         }
         // 3. 如果不存在定时销毁任务，则新增
-        _loop->TimerAdd(_conn_id, sec, std::bind(&Connection::ReleaseInLoop, this));
+        _loop->TimerAdd(_conn_id, sec, std::bind(&Connection::Release, this));
     }
     void CancleInactiveReleaseInLoop()
     {
@@ -1207,6 +1205,10 @@ public:
     void ShutDown()
     {
         _loop->RunInLoop(std::bind(&Connection::ShutDownInLoop, this));
+    }
+    void Release()
+    {
+        _loop->QueueInLoop(std::bind(&Connection::ReleaseInLoop, this));
     }
     // 启动非活跃销毁，并定义多长时间无通信就是非活跃，添加定时任务
     void EnableInactiveRelease(int sec)
@@ -1449,7 +1451,7 @@ public:
 
     void Start()
     {
-        _pool.Create();     // 创建线程池中的从属线程
+        _pool.Create(); // 创建线程池中的从属线程
         _baseloop.Start();
     }
 };
@@ -1475,8 +1477,8 @@ public:
     NetWork()
     {
         DBG_LOG("SIGPIPE INIT");
-        signal(SIGPIPE,SIG_IGN);    //忽略连接断开后继续发送数据导致的异常
+        signal(SIGPIPE, SIG_IGN); // 忽略连接断开后继续发送数据导致的异常
     }
 };
 static NetWork nw;
-#endif 
+#endif
