@@ -1,5 +1,5 @@
-#ifndef __MY_MESSAGE_H__
-#define __MY_MESSAGE_H__
+#ifndef __M_MESSAGE_H__
+#define __M_MESSAGE_H__
 // 定义日志消息类
 //   1.日志输出时间
 //   2.日志等级
@@ -19,7 +19,7 @@ namespace polylog
 {
     struct LogMsg
     {
-        size_t _ctime;          // 日志产生的时间戳
+        time_t _ctime;          // 日志产生的时间戳
         LogLevel::value _level; // 日志等级
         size_t _line;           // 行号
         std::thread::id _tid;   // 线程id
@@ -29,11 +29,12 @@ namespace polylog
 
         LogMsg(LogLevel::value level,
                size_t line,
-               const std::string& file,
-               const std::string& logger,
-               const std::string& msg) : _ctime(util::Date::now()), _level(level), _line(line), _tid(std::this_thread::get_id()),
-                                        _file(file), _logger(logger), _payload(msg)
-        {}
+               const std::string &file,
+               const std::string &logger,
+               const std::string &msg) : _ctime(util::Date::now()), _level(level), _line(line), _tid(std::this_thread::get_id()),
+                                         _file(file), _logger(logger), _payload(msg)
+        {
+        }
     };
 }
 #endif

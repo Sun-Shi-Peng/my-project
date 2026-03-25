@@ -1,5 +1,5 @@
-#ifndef __MY_UTIL_H__
-#define __MY_UTIL_H__
+#ifndef __M_UTIL_H__
+#define __M_UTIL_H__
 // 实用工具类的实现
 //   1.获取系统时间
 //   2.判断文件是否存在

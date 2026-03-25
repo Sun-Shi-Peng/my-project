@@ -1,5 +1,5 @@
-#ifndef __MY_LEVEL_H__
-#define __MY_LEVEL_H__
+#ifndef __M_LEVEL_H__
+#define __M_LEVEL_H__
 
 // 1.定义枚举类：枚举出日志等级
 // 2.提供转换接口：讲枚举转换为对应字符串
