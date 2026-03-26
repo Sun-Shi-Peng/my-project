@@ -156,7 +156,7 @@ namespace polylog
                 return std::make_shared<MsgFormatItem>();
             if (key == "n")
                 return std::make_shared<NLineFormatItem>();
-            if (key=="")
+            if (key == "")
                 return std::make_shared<OtherFormatItem>(val);
             std::cout << "没有对应的格式化字符:%" << key << std::endl;
             abort();
@@ -164,6 +164,7 @@ namespace polylog
         }
 
     public:
+        using ptr = std::shared_ptr<Formatter>;
         Formatter(const std::string &pattern = "[%d{%H:%M:%S}][%t][%c][%f:%l][%p]%T%m%n") : _pattern(pattern)
         {
             assert(parsePattern() == true);

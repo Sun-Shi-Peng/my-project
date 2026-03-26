@@ -94,7 +94,7 @@ namespace polylog
             _ofs.open(pathname, std::ios::binary | std::ios::app);
             assert(_ofs.is_open());
         }
-        // 将日志消息写入到标准输出 --- 写入前判断文件大小，超过了最大大小就要切换
+        // 将日志消息写入到指定输出 --- 写入前判断文件大小，超过了最大大小就要切换
         void log(const char *data, size_t len)
         {
             if (_cur_fsize >= _max_fsize) // 打开新的文件
